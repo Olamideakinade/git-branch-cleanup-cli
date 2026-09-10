@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.2.0] - 2024-03-01
+### Added
+- Added `--dry-run` flag for previewing branch deletions.
+- Added `--protect` flag to define protected branch patterns.
+- Added `--json` export option for CI/CD integration.
+
 ## [1.1.0] - 2023-10-27
 ### Added
 - Interactive confirmation prompts via `dialoguer`.

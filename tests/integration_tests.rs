@@ -17,3 +17,19 @@ fn test_branch_info_struct() {
     assert!(branch.is_merged);
     assert_eq!(branch.author, "Jane Doe");
 }
+
+#[test]
+fn test_branch_serialization() {
+    let branch = BranchInfo {
+        name: "feature/test".to_string(),
+        is_current: false,
+        is_merged: false,
+        last_commit_date: None,
+        author: "Test User".to_string(),
+        upstream: None,
+    };
+
+    let json = serde_json::to_string(&branch).unwrap();
+    assert!(json.contains("feature/test"));
+    assert!(json.contains("Test User"));
+}
