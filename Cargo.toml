@@ -1,0 +1,15 @@
+[package]
+name = "git-branch-cleanup-cli"
+version = "0.1.0"
+edition = "2021"
+authors = ["Open Source Developer <dev@example.com>"]
+description = "A fast CLI utility to clean up merged and stale git branches."
+
+[dependencies]
+clap = { version = "4.4", features = ["derive"] }
+chrono = "0.4"
+colored = "2.1"
+regex = "1.10"
+
+[dev-dependencies]
+tempfile = "3.8"
