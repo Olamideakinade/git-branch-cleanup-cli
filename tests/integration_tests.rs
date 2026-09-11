@@ -21,15 +21,19 @@ fn test_branch_info_struct() {
 #[test]
 fn test_branch_serialization() {
     let branch = BranchInfo {
-        name: "feature/test".to_string(),
+        name: "bugfix/login-crash".to_string(),
         is_current: false,
         is_merged: false,
-        last_commit_date: None,
-        author: "Test User".to_string(),
+        last_commit_date: Some(Utc::now()),
+        author: "John Smith".to_string(),
         upstream: None,
     };
 
-    let json = serde_json::to_string(&branch).unwrap();
-    assert!(json.contains("feature/test"));
-    assert!(json.contains("Test User"));
+    let serialized = serde_json::to_string(&branch).unwrap();
+    assert!(serialized.contains("bugfix/login-crash"));
+    assert!(serialized.contains("John Smith"));
+
+    let deserialized: BranchInfo = serde_json::from_str(&serialized).unwrap();
+    assert_eq!(deserialized.name, branch.name);
+    assert_eq!(deserialized.author, branch.author);
 }

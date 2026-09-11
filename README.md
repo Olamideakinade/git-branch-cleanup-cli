@@ -5,15 +5,15 @@
 
 ![Project Snapshot](preview.svg)
 
-`git-branch-cleanup-cli` is a command-line utility written in Rust designed to identify, inspect, and purge merged or stale local Git branches safely and efficiently.
+`git-branch-cleanup-cli` is a high-performance command-line utility written in Rust designed to identify, inspect, and purge merged or stale local Git branches safely and efficiently.
 
 ## Key Capabilities
 
-- **Merge Inspection**: Automatically detects local branches merged into a specified base branch.
-- **Age-Based Filtering**: Target stale branches older than a specified number of days.
-- **Protected Branches**: Shield critical branches from accidental deletion via patterns.
-- **Dry-Run Mode**: Preview exact cleanup actions without modifying the repository state.
-- **JSON Export**: Output scan results in JSON format for automated scripting and CI/CD pipelines.
+- **Merge Inspection**: Automatically detects local branches merged into your base branch.
+- **Stale Branch Filtering**: Filter branches by inactivity duration (days since last commit).
+- **Protected Patterns**: Define regex or glob patterns to prevent accidental deletion of critical branches.
+- **Interactive TUI**: Beautiful, animated multi-select prompts with live previews and search.
+- **JSON Export**: Export scan results for automated CI/CD pipeline reporting.
 
 ## Installation
 
@@ -23,13 +23,28 @@ cargo install git-branch-cleanup-cli
 
 ## Usage
 
+Run the cleanup utility in your repository:
+
 ```bash
-# Interactively clean up merged branches against main
-git-branch-cleanup-cli
-
-# Preview deletions without executing them
-git-branch-cleanup-cli --dry-run
-
-# Export branch status as JSON
-git-branch-cleanup-cli --json
+git-branch-cleanup
 ```
+
+### CLI Options
+
+```bash
+# Check against a custom base branch
+git-branch-cleanup --base develop
+
+# Target branches older than 30 days
+git-branch-cleanup --older-than 30
+
+# Dry run mode (preview deletions without executing)
+git-branch-cleanup --dry-run
+
+# Export branch metadata to JSON
+git-branch-cleanup --json
+```
+
+## License
+
+Licensed under the MIT License.

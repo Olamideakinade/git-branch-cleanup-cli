@@ -18,17 +18,13 @@ pub struct GitRepository;
 impl GitRepository {
     pub fn list_local_branches(base_branch: &str) -> Result<Vec<BranchInfo>, String> {
         let output = Command::new("git")
-            .args([
-                "for-each-ref",
-                "--format=%(HEAD)|%(refname:short)|%(upstream:short)|%(authorname)|%(committerdate:unix)",
-                "refs/heads/"
-            ])
+            .args(["branch", "--format=%(HEAD)|%(refname:short)|%(upstream:short)|%(committerdate:iso8601)|%(authorname)"])
             .output()
             .map_err(|e| format!("Failed to execute git command: {}", e))?;
 
         if !output.status.success() {
-            let err_msg = String::from_utf8_lossy(&output.stderr);
-            return Err(format!("Git error: {}", err_msg.trim()));
+            let stderr = String::from_utf8_lossy(&output.stderr);
+            return Err(format!("Git error: {}", stderr.trim()));
         }
 
         let stdout = String::from_utf8_lossy(&output.stdout);
@@ -38,9 +34,9 @@ impl GitRepository {
             .args(["branch", "--merged", base_branch])
             .output()
             .map_err(|e| format!("Failed to check merged branches: {}", e))?;
-
-        let merged_stdout = String::from_utf8_lossy(&merged_output.stdout);
-        let merged_branches: Vec<&str> = merged_stdout
+        
+        let merged_str = String::from_utf8_lossy(&merged_output.stdout);
+        let merged_branches: Vec<&str> = merged_str
             .lines()
             .map(|l| l.trim().trim_start_matches('*').trim())
             .collect();
@@ -54,14 +50,10 @@ impl GitRepository {
             let is_current = parts[0] == "*";
             let name = parts[1].to_string();
             let upstream = if parts[2].is_empty() { None } else { Some(parts[2].to_string()) };
-            let author = parts[3].to_string();
-            
-            let timestamp = parts[4].parse::<i64>().unwrap_or(0);
-            let last_commit_date = if timestamp > 0 {
-                Utc.timestamp_opt(timestamp, 0).single()
-            } else {
-                None
-            };
+            let last_commit_date = DateTime::parse_from_str(parts[3], "%Y-%m-%d %H:%M:%S %z")
+                .ok()
+                .map(|dt| dt.with_timezone(&Utc));
+            let author = parts[4].to_string();
 
             let is_merged = merged_branches.contains(&name.as_str()) || is_current;
 
@@ -86,8 +78,8 @@ impl GitRepository {
             .map_err(|e| format!("Failed to execute branch deletion: {}", e))?;
 
         if !output.status.success() {
-            let err = String::from_utf8_lossy(&output.stderr);
-            return Err(format!("Failed to delete branch {}: {}", branch_name, err.trim()));
+            let stderr = String::from_utf8_lossy(&output.stderr);
+            return Err(format!("Failed to delete branch '{}': {}", branch_name, stderr.trim()));
         }
 
         Ok(())

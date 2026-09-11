@@ -4,8 +4,8 @@ use clap::Parser;
 #[command(
     name = "git-branch-cleanup-cli",
     author = "Open Source Developer",
-    version = "1.2.0",
-    about = "A fast CLI utility to clean up merged and stale git branches."
+    version = "1.3.0",
+    about = "A fast CLI utility to clean up merged and stale git branches with style."
 )]
 pub struct Cli {
     #[arg(
@@ -26,26 +26,23 @@ pub struct Cli {
     #[arg(
         short,
         long,
-        help = "Force deletion without confirmation"
-    )]
-    pub force: bool,
-
-    #[arg(
-        long,
-        help = "Preview deletions without executing them"
+        default_value = "false",
+        help = "Preview deletions without actually executing them"
     )]
     pub dry_run: bool,
 
     #[arg(
+        short,
         long,
-        help = "Output branch inspection data as JSON"
+        default_value = "false",
+        help = "Export branch analysis data as JSON"
     )]
     pub json: bool,
 
     #[arg(
         short,
         long,
-        help = "Protected branch patterns (comma separated)"
+        help = "Regex pattern for branches to protect from deletion"
     )]
     pub protect: Option<String>,
 }
